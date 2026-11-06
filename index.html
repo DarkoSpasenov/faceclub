@@ -59,7 +59,7 @@
 </head>
 <body>
 <div class="intro-screen" id="intro" aria-hidden="true"><img src="assets/faceclub-logo.png" alt="" width="596" height="620"></div>
-<a class="skip" href="#reservation" data-i18n="skip">Direkt zur Reservation</a>
+<a class="skip" href="#events" data-i18n="skip">Direkt zum Inhalt</a>
 
 <header class="site-head">
   <div class="nav">
@@ -80,7 +80,7 @@
         <button type="button" data-lang="bks" aria-pressed="false" title="Bosanski / Hrvatski / Srpski">BKS</button>
         <button type="button" data-lang="en" aria-pressed="false" title="English">EN</button>
       </div>
-      <a class="pill" href="#reservation" data-i18n="cta.reserve">Lounge reservieren</a>
+      <a class="pill" href="reservieren.html" data-i18n="cta.reserve">Lounge reservieren</a>
     </div>
   </div>
 </header>
@@ -96,7 +96,7 @@
       <div class="txt">
         <p class="kicker" data-i18n="hero2.kicker">19 Lounges rund um Dancefloor und Bar</p>
         <h2 data-i18n="hero2.title">Deine Lounge, direkt am Geschehen</h2>
-        <a class="pill" href="#reservation" data-i18n="hero2.cta">Clubplan ansehen</a>
+        <a class="pill" href="reservieren.html" data-i18n="hero2.cta">Clubplan ansehen</a>
       </div>
     </div>
   </section>
@@ -118,13 +118,7 @@
         <h2 id="club-title">Live<br>on Face</h2>
         <small data-i18n-html="club.since">(seit über<br>15 Jahren)</small>
       </div>
-      <div class="about">
-        <div>
-          <p data-i18n="club.p1">Jeden Samstag holen wir die grossen Namen der Balkan-Szene auf unsere Bühne.</p>
-          <p data-i18n="club.p2">Zehn Minuten von Zürich, direkt in Dietlikon.</p>
-        </div>
-        <p class="stage"><strong data-i18n="club.stage">Auf unserer Bühne standen u. a.</strong> Dragana Mirković, Mile Kitić, Saša Matić, Seka Aleksić, Indira Radić, Elena Kitić, Milica Pavlović, Darko Lazić, Jala Brat &amp; Buba Corelli, Samra, Breskvica, Senidah, Nikolija, Voyage, Relja, Devito <span data-i18n="club.and">und</span> Desingerica.</p>
-      </div>
+      <p class="club-line" data-i18n="club.short">Jeden Samstag die grössten Balkan-Stars – zehn Minuten von Zürich.</p>
     </div>
   </section>
   <div class="photos" role="region" aria-label="Fotos">
@@ -134,77 +128,14 @@
     <figure><img src="assets/club-eingang.jpg" width="1000" height="666" alt="Eingangsbereich des Face Club" loading="lazy" style="object-position:30% 50%"><figcaption><span data-i18n="ph.entry">Eingang</span></figcaption></figure>
   </div>
 
-  <section class="reserve" id="reservation" aria-labelledby="res-title">
-    <div class="wrap">
-      <div class="res-intro">
-        <h2 id="res-title" data-i18n="res.title">Lounge reservieren</h2>
-        <p data-i18n="res.intro">Wähle Datum und Lounge auf dem Plan.</p>
+  <section class="teaser" id="lounges" aria-labelledby="teaser-title">
+    <div class="wrap teaser-grid">
+      <div>
+        <h2 id="teaser-title" data-i18n="teaser.title">19 Lounges. Du wählst deinen Platz.</h2>
+        <p data-i18n="teaser.text">Datum wählen, Lounge auf dem Clubplan antippen, Anfrage senden.</p>
+        <a class="pill" href="reservieren.html" data-i18n="cta.reserve">Lounge reservieren</a>
       </div>
-
-      <div class="dates" id="dates" role="group" data-i18n-aria="res.date" aria-label="Datum"></div>
-      <ul class="zones" id="zones" data-i18n-aria="zones.aria" aria-label="Zonen"></ul>
-
-      <div class="plan-box" id="planBox">
-        <div class="plan-wrap">
-          <svg id="plan" viewBox="0 0 1000 700" role="group" data-i18n-aria="plan.aria" aria-label="Clubplan">
-            <defs>
-              <pattern id="ledGrid" width="50" height="50" patternUnits="userSpaceOnUse">
-                <rect width="50" height="50" fill="#080a10"></rect>
-                <path d="M50 0H0V50" fill="none" stroke="#1a2a3a" stroke-width="1"></path>
-              </pattern>
-            </defs>
-            <rect class="room" x="20" y="20" width="960" height="660" rx="6"></rect>
-            <rect x="880" y="672" width="80" height="16" fill="#0b0c10"></rect>
-            <text class="flabel" x="920" y="662" text-anchor="middle" data-i18n="plan.entry">Eingang</text>
-            <rect class="feature" x="420" y="36" width="160" height="70" rx="4"></rect>
-            <text class="flabel" x="500" y="76" text-anchor="middle" data-i18n="plan.dj">DJ / Bühne</text>
-            <rect class="floor" x="160" y="150" width="680" height="400" rx="4"></rect>
-            <text class="flabel" x="500" y="200" text-anchor="middle" data-i18n="plan.floor">Dancefloor</text>
-            <rect class="barisland" x="400" y="300" width="200" height="90" rx="8"></rect>
-            <text class="barlabel" x="500" y="351" text-anchor="middle" data-i18n="plan.bar">Bar</text>
-            <rect class="feature" x="36" y="600" width="110" height="64" rx="4"></rect>
-            <text class="flabel" x="91" y="637" text-anchor="middle" data-i18n="plan.wc">WC</text>
-            <rect class="feature" x="780" y="600" width="90" height="64" rx="4"></rect>
-            <text class="flabel" x="825" y="637" text-anchor="middle" data-i18n="plan.coat">Garderobe</text>
-            <g id="tables"></g>
-          </svg>
-        </div>
-        <div class="tip" id="tip" aria-hidden="true"></div>
-      </div>
-      <p class="plan-note swipe" data-i18n="plan.swipe">Plan seitlich wischen.</p>
-      <p class="plan-note" id="planNote" data-i18n="plan.note" hidden>Dunkle Lounges sind bereits vergeben.</p>
-
-      <div class="res-grid">
-        <div class="pick" id="pick" aria-live="polite"></div>
-
-        <form class="res" id="resForm" action="reserve.php" method="post" novalidate>
-          <div class="two">
-            <div class="f"><label for="f-date" data-i18n="f.date">Datum</label><select id="f-date" name="event" required></select></div>
-            <div class="f"><label for="f-table" data-i18n="f.lounge">Lounge</label><select id="f-table" name="table" required></select><span class="em" aria-live="polite"></span></div>
-          </div>
-          <div class="two">
-            <div class="f"><label for="f-guests" data-i18n="f.guests">Personen</label><input id="f-guests" name="guests" type="number" inputmode="numeric" min="1" max="30" value="6" required></div>
-            <div class="f"><label for="f-arrival" data-i18n="f.arrival">Ankunft ca.</label>
-              <select id="f-arrival" name="arrival"><option>23:00</option><option>23:30</option><option selected>00:00</option><option>00:30</option><option>01:00</option><option>01:30</option></select></div>
-          </div>
-          <div class="f"><label for="f-name" data-i18n="f.name">Vor- und Nachname</label><input id="f-name" name="name" type="text" autocomplete="name" required minlength="2"><span class="em" aria-live="polite"></span></div>
-          <div class="two">
-            <div class="f"><label for="f-phone" data-i18n="f.phone">Telefon</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+41 79 …" required pattern="[0-9 +().\-\/]{7,25}"><span class="em" aria-live="polite"></span></div>
-            <div class="f"><label for="f-email" data-i18n="f.email">E-Mail</label><input id="f-email" name="email" type="email" autocomplete="email" required><span class="em" aria-live="polite"></span></div>
-          </div>
-          <div class="f"><label for="f-msg" data-i18n="f.msg">Wünsche (optional)</label><textarea id="f-msg" name="message" data-i18n-ph="f.msgPh" maxlength="1000"></textarea></div>
-          <div class="hp" aria-hidden="true"><label for="f-web">Website</label><input id="f-web" name="website" type="text" tabindex="-1" autocomplete="off"></div>
-          <input type="hidden" name="ts" id="f-ts">
-          <input type="hidden" name="lang" id="f-lang" value="de">
-          <label class="ok-check" id="acceptWrap"><input type="checkbox" name="accept" id="f-accept" required> <span data-i18n-html="f.accept">Mir ist bewusst, dass die Mindestkonsumation gilt.</span></label>
-          <div class="msg" id="msg" role="status"></div>
-          <div class="actions">
-            <button class="pill" type="submit" id="send" data-i18n="f.submit">Anfrage senden</button>
-            <button class="pill wa" type="button" id="sendWa" data-i18n="f.wa">Per WhatsApp senden</button>
-          </div>
-          <p class="alt"><span data-i18n="f.or">Oder ruf uns an:</span> <a href="tel:+41792086389">079 208 63 89</a></p>
-        </form>
-      </div>
+      <a class="mini-plan" href="reservieren.html" aria-hidden="true" tabindex="-1"><svg id="miniPlan" role="presentation"></svg></a>
     </div>
   </section>
 
@@ -241,7 +172,7 @@
   </div>
 </footer>
 
-<div class="sticky-cta off" id="stickyCta"><a class="pill" href="#reservation" data-i18n="cta.reserve">Lounge reservieren</a></div>
+<div class="sticky-cta off" id="stickyCta"><a class="pill" href="reservieren.html" data-i18n="cta.reserve">Lounge reservieren</a></div>
 
 <script src="assets/js/config.js"></script>
 <script src="assets/js/i18n.js"></script>

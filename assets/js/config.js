@@ -53,26 +53,27 @@ window.FC_CONFIG = {
     lounge:  { color: "#c9cdd3", text: "#05060a", min: 500,  seats: [4, 8],   photo: "assets/club-lounge.jpg" }
   },
 
-  /* Lounges: Mittelpunkt x/y und Grösse w/h auf dem Plan (1000 × 700) */
+  /* Lounges: Mittelpunkt x/y und Grösse w/h auf dem Plan (1000 × 700).
+     m = gleiche Lounge auf dem Handy-Plan (Hochformat 600 × 760): [x, y, w, h] */
   lounges: [
-    { n: 1,  zone: "vip",     x: 190, y: 75,  w: 110, h: 60 },
-    { n: 2,  zone: "vip",     x: 330, y: 75,  w: 110, h: 60 },
-    { n: 3,  zone: "vip",     x: 670, y: 75,  w: 110, h: 60 },
-    { n: 4,  zone: "vip",     x: 810, y: 75,  w: 110, h: 60 },
-    { n: 5,  zone: "premium", x: 85,  y: 180, w: 70,  h: 80 },
-    { n: 6,  zone: "premium", x: 85,  y: 270, w: 70,  h: 80 },
-    { n: 7,  zone: "premium", x: 85,  y: 360, w: 70,  h: 80 },
-    { n: 8,  zone: "premium", x: 85,  y: 450, w: 70,  h: 80 },
-    { n: 9,  zone: "premium", x: 85,  y: 540, w: 70,  h: 80 },
-    { n: 10, zone: "premium", x: 915, y: 180, w: 70,  h: 80 },
-    { n: 11, zone: "premium", x: 915, y: 270, w: 70,  h: 80 },
-    { n: 12, zone: "premium", x: 915, y: 360, w: 70,  h: 80 },
-    { n: 13, zone: "premium", x: 915, y: 450, w: 70,  h: 80 },
-    { n: 14, zone: "premium", x: 915, y: 540, w: 70,  h: 80 },
-    { n: 15, zone: "lounge",  x: 240, y: 620, w: 100, h: 56 },
-    { n: 16, zone: "lounge",  x: 355, y: 620, w: 100, h: 56 },
-    { n: 17, zone: "lounge",  x: 470, y: 620, w: 100, h: 56 },
-    { n: 18, zone: "lounge",  x: 585, y: 620, w: 100, h: 56 },
-    { n: 19, zone: "lounge",  x: 700, y: 620, w: 100, h: 56 }
+    { n: 1,  zone: "vip",     x: 190, y: 75,  w: 110, h: 60, m: [75, 52, 92, 56] },
+    { n: 2,  zone: "vip",     x: 330, y: 75,  w: 110, h: 60, m: [180, 52, 92, 56] },
+    { n: 3,  zone: "vip",     x: 670, y: 75,  w: 110, h: 60, m: [420, 52, 92, 56] },
+    { n: 4,  zone: "vip",     x: 810, y: 75,  w: 110, h: 60, m: [525, 52, 92, 56] },
+    { n: 5,  zone: "premium", x: 85,  y: 180, w: 70,  h: 80, m: [52, 175, 64, 74] },
+    { n: 6,  zone: "premium", x: 85,  y: 270, w: 70,  h: 80, m: [52, 260, 64, 74] },
+    { n: 7,  zone: "premium", x: 85,  y: 360, w: 70,  h: 80, m: [52, 345, 64, 74] },
+    { n: 8,  zone: "premium", x: 85,  y: 450, w: 70,  h: 80, m: [52, 430, 64, 74] },
+    { n: 9,  zone: "premium", x: 85,  y: 540, w: 70,  h: 80, m: [52, 515, 64, 74] },
+    { n: 10, zone: "premium", x: 915, y: 180, w: 70,  h: 80, m: [548, 175, 64, 74] },
+    { n: 11, zone: "premium", x: 915, y: 270, w: 70,  h: 80, m: [548, 260, 64, 74] },
+    { n: 12, zone: "premium", x: 915, y: 360, w: 70,  h: 80, m: [548, 345, 64, 74] },
+    { n: 13, zone: "premium", x: 915, y: 450, w: 70,  h: 80, m: [548, 430, 64, 74] },
+    { n: 14, zone: "premium", x: 915, y: 540, w: 70,  h: 80, m: [548, 515, 64, 74] },
+    { n: 15, zone: "lounge",  x: 240, y: 620, w: 100, h: 56, m: [110, 640, 86, 56] },
+    { n: 16, zone: "lounge",  x: 355, y: 620, w: 100, h: 56, m: [205, 640, 86, 56] },
+    { n: 17, zone: "lounge",  x: 470, y: 620, w: 100, h: 56, m: [300, 640, 86, 56] },
+    { n: 18, zone: "lounge",  x: 585, y: 620, w: 100, h: 56, m: [395, 640, 86, 56] },
+    { n: 19, zone: "lounge",  x: 700, y: 620, w: 100, h: 56, m: [490, 640, 86, 56] }
   ]
 };

@@ -67,20 +67,20 @@
     $$("[data-i18n-aria]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nAria)));
     $$("[data-i18n-ph]").forEach(el => el.setAttribute("placeholder", t(el.dataset.i18nPh)));
     $$(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
-    $("#f-lang").value = lang;
+    const fl = $("#f-lang"); if (fl) fl.value = lang;
   }
 
   /* ---------- Hero ---------- */
   function renderHero() {
     const box = $("#heroEvent"), e = upcoming[0];
     if (!e) {
-      box.innerHTML = `<p class="kicker">${t("hero.none.kicker")}</p><h1 class="cond">${t("hero.none.title")}</h1><a class="pill" href="#events">${t("hero.none.cta")}</a>`;
+      box.innerHTML = `<p class="kicker">${t("hero.none.kicker")}</p><h1 class="cond">${t("hero.none.title")}</h1><a class="pill" href="reservieren.html">${t("cta.reserve")}</a>`;
       return;
     }
     const d = toDate(e.date);
     box.innerHTML = `<p class="kicker">${longDate(d)} – ${esc(e.title)}${e.soldOut ? ` <span class="soldout">${t("card.soldout")}</span>` : ""}</p>
       <h1 class="cond">${esc(e.artists)}<span class="vh"> – ${esc(t("hero.live", { a: "" }).trim())}</span></h1>
-      <a class="pill" href="#reservation" data-date="${e.date}">${t("cta.reserve")}</a>`;
+      <a class="pill" href="reservieren.html#${e.date}">${t("cta.reserve")}</a>`;
   }
 
   /* ---------- Event-Karten ---------- */
@@ -91,12 +91,12 @@
         ? `<div class="pic sq"><img src="${e.poster}" alt="Flyer ${esc(e.artists)}" loading="lazy" width="800" height="800">${e.soldOut ? `<span class="soldout">${t("card.soldout")}</span>` : ""}</div>`
         : `<div class="pic type"><b class="cond">${esc(e.artists)}</b><span>${shortDate(d)}</span></div>`;
       return `<article class="card">${pic}<h3>${esc(e.artists)}</h3><p>${longDate(d)} – ${esc(e.title)}</p>
-        <a class="pill" href="#reservation" data-date="${e.date}">${t("cta.reserve")}</a></article>`;
+        <a class="pill" href="reservieren.html#${e.date}">${t("cta.reserve")}</a></article>`;
     }).join("");
     const nextFree = dates.find(x => !eventOn(x));
     const weekly = `<article class="card"><div class="pic type cyan"><b class="cond">${t("card.weekly.title")}</b><span>${t("card.weekly.text")}</span></div>
       <h3>${t("clubnight")}</h3><p>${t("info.hoursText")}</p>
-      <a class="pill" href="#reservation" ${nextFree ? `data-date="${nextFree}"` : ""}>${t("card.weekly.cta")}</a></article>`;
+      <a class="pill" href="reservieren.html${nextFree ? "#" + nextFree : ""}">${t("card.weekly.cta")}</a></article>`;
     const ig = `<article class="card"><div class="pic type light"><b class="cond">${t("card.ig.title")}</b><span>${t("card.ig.text")}</span></div>
       <h3>@faceclubofficial</h3><p>Instagram</p>
       <a class="pill ghost" href="https://www.instagram.com/faceclubofficial/" target="_blank" rel="noopener">${t("card.ig.cta")}</a></article>`;
@@ -154,40 +154,70 @@
       `<li><button type="button" aria-pressed="${state.zones.has(k)}" data-zone="${k}"><i style="background:${z.color}"></i><b>${t("zone." + k)}</b><em>${t("zone.from", { p: money(z.min) })}, ${t("zone.persons", { a: z.seats[0], b: z.seats[1] })}</em></button></li>`).join("");
   }
 
-  /* ---------- Plan ---------- */
-  function renderTables() {
-    const g = $("#tables"); g.innerHTML = "";
-    const res = reserved();
+  /* ---------- Plan (Querformat am Desktop, Hochformat am Handy) ---------- */
+  const LAYOUT = {
+    desk: { vb: [1000, 700], room: [20, 20, 960, 660], door: [880, 672, 80, 16], doorL: [920, 662], dj: [420, 36, 160, 70],
+            floor: [160, 150, 680, 400], floorL: [500, 200], bar: [400, 300, 200, 90], wc: [36, 600, 110, 64], coat: [780, 600, 90, 64], fs: 18, ls: 14 },
+    mob:  { vb: [600, 760], room: [10, 10, 580, 740], door: [500, 742, 80, 16], doorL: [540, 728], dj: [240, 24, 120, 56],
+            floor: [100, 120, 400, 465], floorL: [300, 165], bar: [215, 315, 170, 80], wc: [20, 688, 100, 52], coat: [380, 688, 100, 52], fs: 24, ls: 18 }
+  };
+  const mqMob = window.matchMedia("(max-width:700px)");
+  const mode = () => (mqMob.matches ? "mob" : "desk");
+  const geo = (l, m) => (m === "mob" && l.m ? { x: l.m[0], y: l.m[1], w: l.m[2], h: l.m[3] } : { x: l.x, y: l.y, w: l.w, h: l.h });
+
+  function svgEl(tag, attrs, text) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function drawPlan(svg, interactive) {
+    const m = mode(), Lo = LAYOUT[m], res = interactive ? reserved() : new Set();
+    svg.setAttribute("viewBox", `0 0 ${Lo.vb[0]} ${Lo.vb[1]}`);
+    svg.innerHTML = "";
+    const pid = "led-" + (svg.id || "p");
+    const defs = svgEl("defs", {}), pat = svgEl("pattern", { id: pid, width: 50, height: 50, patternUnits: "userSpaceOnUse" });
+    pat.append(svgEl("rect", { width: 50, height: 50, fill: "#080a10" }), svgEl("path", { d: "M50 0H0V50", fill: "none", stroke: "#1a2a3a", "stroke-width": 1 }));
+    defs.append(pat); svg.append(defs);
+    const R = (a, cls, extra) => svgEl("rect", Object.assign({ x: a[0], y: a[1], width: a[2], height: a[3], class: cls, rx: 6 }, extra || {}));
+    const T = (x, y, txt, cls) => svgEl("text", { x, y, "text-anchor": "middle", class: cls, style: `font-size:${Lo.ls}px` }, txt);
+    svg.append(R(Lo.room, "room"));
+    svg.append(svgEl("rect", { x: Lo.door[0], y: Lo.door[1], width: Lo.door[2], height: Lo.door[3], fill: "#0b0c10" }));
+    svg.append(T(Lo.doorL[0], Lo.doorL[1], t("plan.entry"), "flabel"));
+    svg.append(R(Lo.dj, "feature"), T(Lo.dj[0] + Lo.dj[2] / 2, Lo.dj[1] + Lo.dj[3] / 2 + 6, t("plan.dj"), "flabel"));
+    svg.append(R(Lo.floor, "floor", { fill: `url(#${pid})` }), T(Lo.floorL[0], Lo.floorL[1], t("plan.floor"), "flabel"));
+    svg.append(R(Lo.bar, "barisland", { rx: 10 }), T(Lo.bar[0] + Lo.bar[2] / 2, Lo.bar[1] + Lo.bar[3] / 2 + 6, t("plan.bar"), "barlabel"));
+    svg.append(R(Lo.wc, "feature"), T(Lo.wc[0] + Lo.wc[2] / 2, Lo.wc[1] + Lo.wc[3] / 2 + 6, t("plan.wc"), "flabel"));
+    svg.append(R(Lo.coat, "feature"), T(Lo.coat[0] + Lo.coat[2] / 2, Lo.coat[1] + Lo.coat[3] / 2 + 6, t("plan.coat"), "flabel"));
+    const g = svgEl("g", { id: interactive ? "tables" : "" });
     C.lounges.forEach(l => {
-      const z = C.zones[l.zone], taken = res.has(l.n);
-      const el = document.createElementNS(NS, "g");
-      el.setAttribute("class", "tbl" + (taken ? " reserved" : "") + (state.lounge === l.n ? " selected" : "") + (state.zones.has(l.zone) ? "" : " dim"));
-      el.setAttribute("tabindex", taken ? "-1" : "0");
-      el.setAttribute("role", "button");
-      el.setAttribute("aria-pressed", String(state.lounge === l.n));
+      const z = C.zones[l.zone], q = geo(l, m), taken = res.has(l.n);
+      const el = svgEl("g", { class: "tbl" + (taken ? " reserved" : "") + (interactive && state.lounge === l.n ? " selected" : "") + (state.zones.has(l.zone) || !interactive ? "" : " dim") });
       el.dataset.n = l.n;
-      el.setAttribute("aria-label", `${t("lounge")} ${l.n}, ${t("zone." + l.zone)}, ${t("pick.persons", { a: z.seats[0], b: z.seats[1] })}, ${t("zone.from", { p: money(z.min) })}${taken ? ", " + t("taken") : ""}`);
-      const rect = (cls, pad) => {
-        const r = document.createElementNS(NS, "rect");
-        r.setAttribute("x", l.x - l.w / 2 - pad); r.setAttribute("y", l.y - l.h / 2 - pad);
-        r.setAttribute("width", l.w + pad * 2); r.setAttribute("height", l.h + pad * 2);
-        r.setAttribute("rx", 6 + pad); r.setAttribute("class", cls); return r;
-      };
-      const ring = rect("ring", 5), shape = rect("shape", 0);
-      shape.setAttribute("fill", z.color); shape.setAttribute("stroke", z.color);
-      const tx = document.createElementNS(NS, "text");
-      tx.setAttribute("x", l.x); tx.setAttribute("y", l.y + 6); tx.setAttribute("text-anchor", "middle"); tx.setAttribute("fill", z.text);
-      tx.textContent = l.n;
-      el.append(ring, shape, tx);
-      g.appendChild(el);
+      if (interactive) {
+        el.setAttribute("tabindex", taken ? "-1" : "0");
+        el.setAttribute("role", "button");
+        el.setAttribute("aria-pressed", String(state.lounge === l.n));
+        el.setAttribute("aria-label", `${t("lounge")} ${l.n}, ${t("zone." + l.zone)}, ${t("pick.persons", { a: z.seats[0], b: z.seats[1] })}, ${t("zone.from", { p: money(z.min) })}${taken ? ", " + t("taken") : ""}`);
+      }
+      const box = (cls, pad) => svgEl("rect", { x: q.x - q.w / 2 - pad, y: q.y - q.h / 2 - pad, width: q.w + pad * 2, height: q.h + pad * 2, rx: 6 + pad, class: cls });
+      const shape = box("shape", 0); shape.setAttribute("fill", z.color); shape.setAttribute("stroke", z.color);
+      el.append(box("ring", 5), shape, svgEl("text", { x: q.x, y: q.y + Lo.fs / 3, "text-anchor": "middle", fill: z.text, style: `font-size:${Lo.fs}px` }, String(l.n)));
+      g.append(el);
     });
-    $("#planNote").hidden = res.size === 0;
+    svg.append(g);
+  }
+  function renderTables() {
+    const svg = $("#plan"); if (!svg) return;
+    drawPlan(svg, true);
+    $("#planNote").hidden = reserved().size === 0;
   }
   function initPlan() {
-    const g = $("#tables"), tip = $("#tip"), box = $("#planBox");
-    g.addEventListener("click", e => { const el = e.target.closest(".tbl"); if (el && !el.classList.contains("reserved")) selectLounge(+el.dataset.n, true); });
-    g.addEventListener("keydown", e => {
-      const el = e.target.closest(".tbl");
+    const svg = $("#plan"), tip = $("#tip"), box = $("#planBox");
+    const hit = e => e.target.closest && e.target.closest(".tbl");
+    svg.addEventListener("click", e => { const el = hit(e); if (el && !el.classList.contains("reserved")) selectLounge(+el.dataset.n, true); });
+    svg.addEventListener("keydown", e => {
+      const el = hit(e);
       if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); if (!el.classList.contains("reserved")) selectLounge(+el.dataset.n, true); }
     });
     const show = el => {
@@ -198,17 +228,17 @@
       tip.style.top = (r.top - b.top) + "px";
       tip.classList.add("on");
     };
-    g.addEventListener("pointerover", e => { const el = e.target.closest(".tbl"); if (el && e.pointerType === "mouse") show(el); });
-    g.addEventListener("pointerout", e => { if (e.target.closest(".tbl")) tip.classList.remove("on"); });
-    g.addEventListener("focusin", e => { const el = e.target.closest(".tbl"); if (el) show(el); });
-    g.addEventListener("focusout", () => tip.classList.remove("on"));
+    svg.addEventListener("pointerover", e => { const el = hit(e); if (el && e.pointerType === "mouse") show(el); });
+    svg.addEventListener("pointerout", e => { if (hit(e)) tip.classList.remove("on"); });
+    svg.addEventListener("focusin", e => { const el = hit(e); if (el) show(el); });
+    svg.addEventListener("focusout", () => tip.classList.remove("on"));
   }
   function selectLounge(n, fromPlan) {
     state.lounge = n;
     $("#f-table").value = n ? String(n) : "";
     clearErr($("#f-table"));
     renderTables(); renderPick();
-    if (fromPlan && window.matchMedia("(max-width:960px)").matches) $("#pick").scrollIntoView({ behavior: "smooth", block: "center" });
+    if (fromPlan && window.matchMedia("(max-width:960px)").matches) $("#step3").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function renderPick() {
@@ -338,13 +368,16 @@
       es.forEach(x => x.isIntersecting ? vis.add(x.target.id) : vis.delete(x.target.id));
       cta.classList.toggle("off", vis.size > 0);
     });
-    ["hero", "reservation"].forEach(id => io.observe(document.getElementById(id)));
+    ["hero", "lounges"].forEach(id => { const n = document.getElementById(id); if (n) io.observe(n); });
   }
 
+  const isHome = !!$("#heroEvent"), isRes = !!$("#resForm");
   function renderAll() {
-    applyStatic(); renderHero(); renderCards(); renderDates(); renderZones();
-    renderLoungeSelect(); renderTables(); renderPick();
+    applyStatic();
+    if (isHome) { renderHero(); renderCards(); const mp = $("#miniPlan"); if (mp) drawPlan(mp, false); }
+    if (isRes) { renderDates(); renderZones(); renderLoungeSelect(); renderTables(); renderPick(); }
   }
+  mqMob.addEventListener("change", () => { if (isRes) renderTables(); const mp = $("#miniPlan"); if (mp) drawPlan(mp, false); });
 
   /* ---------- Intro (wie auf dem bisherigen Auftritt) ---------- */
   function initIntro() {
@@ -366,7 +399,12 @@
     el.addEventListener("click", finish);
   }
 
-  $("#year").textContent = new Date().getFullYear();
-  initIntro();
-  renderAll(); initCarousel(); initPlan(); initForm(); initSticky(); stamp();
+  const yr = $("#year"); if (yr) yr.textContent = new Date().getFullYear();
+  if (isRes) {
+    const h = decodeURIComponent(location.hash.slice(1));
+    if (dates.includes(h)) state.date = h;
+  }
+  renderAll();
+  if (isHome) { initIntro(); initCarousel(); initSticky(); }
+  if (isRes) { initPlan(); initForm(); stamp(); }
 })();

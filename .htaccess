@@ -15,7 +15,7 @@ AddType font/woff2 .woff2
 
   # Alte URLs des bisherigen Auftritts weiterleiten (SEO & Links auf Flyern)
   RewriteRule ^homepage/?$             /                    [L,R=301]
-  RewriteRule ^reservation/?$          /#reservation        [L,R=301,NE]
+  RewriteRule ^reservation/?$          /reservieren.html    [L,R=301]
   RewriteRule ^events/?$               /#events             [L,R=301,NE]
   RewriteRule ^gallery/?$              /#club               [L,R=301,NE]
   RewriteRule ^terms-and-conditions/?$ /agb.html            [L,R=301]

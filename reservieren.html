@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lounge reservieren – Face Club Dietlikon</title>
+<meta name="description" content="Lounge im Face Club Dietlikon reservieren: Datum wählen, Platz auf dem Clubplan antippen, Anfrage per E-Mail oder WhatsApp senden.">
+<link rel="canonical" href="https://www.faceclub.ch/reservieren.html">
+<meta property="og:site_name" content="Face Club">
+<meta property="og:title" content="Face Club Dietlikon – Live on Face">
+<meta property="og:description" content="Jeden Samstag Balkan-Live-Acts. Lounges online reservieren. Industriestrasse 29, 8305 Dietlikon.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.faceclub.ch/reservieren.html">
+<meta property="og:image" content="https://www.faceclub.ch/assets/club-saal.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="assets/faceclub-f.png">
+<link rel="apple-touch-icon" href="assets/faceclub-logo.png">
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+
+</head>
+<body class="sub">
+<a class="skip" href="#plan" data-i18n="skip2">Direkt zum Clubplan</a>
+
+<header class="site-head solid">
+  <div class="nav">
+    <a class="brand" href="./" aria-label="Face Club">
+      <img src="assets/faceclub-f.png" alt="" width="36" height="46">
+      <span>FACE CLUB</span>
+    </a>
+    <div class="nav-r">
+      <nav aria-label="Hauptnavigation">
+        <ul class="nav-links">
+          <li><a href="./#events" data-i18n="nav.events">Events</a></li>
+          <li><a href="./#club" data-i18n="nav.club">Der Club</a></li>
+          <li><a href="./#info" data-i18n="nav.info">Anfahrt</a></li>
+        </ul>
+      </nav>
+      <div class="lang" role="group" aria-label="Sprache / Jezik / Language">
+        <button type="button" data-lang="de" aria-pressed="true" title="Deutsch">DE</button>
+        <button type="button" data-lang="bks" aria-pressed="false" title="Bosanski / Hrvatski / Srpski">BKS</button>
+        <button type="button" data-lang="en" aria-pressed="false" title="English">EN</button>
+      </div>
+      <a class="pill ghost" href="tel:+41792086389">079 208 63 89</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="reserve page" id="reservation" aria-labelledby="res-title">
+    <div class="wrap">
+      <div class="res-intro">
+        <h1 id="res-title" data-i18n="res.title">Lounge reservieren</h1>
+        <p data-i18n="res.intro">Wähle Datum und Lounge auf dem Plan.</p>
+      </div>
+      <h2 class="step"><span>1</span><b data-i18n="step.date">Datum wählen</b></h2>
+
+      <div class="dates" id="dates" role="group" data-i18n-aria="res.date" aria-label="Datum"></div>
+      <h2 class="step"><span>2</span><b data-i18n="step.lounge">Lounge auf dem Plan antippen</b></h2>
+      <ul class="zones" id="zones" data-i18n-aria="zones.aria" aria-label="Zonen"></ul>
+
+      <div class="plan-box" id="planBox">
+        <div class="plan-wrap">
+          <svg id="plan" role="group" data-i18n-aria="plan.aria" aria-label="Clubplan"></svg>
+        </div>
+        <div class="tip" id="tip" aria-hidden="true"></div>
+      </div>
+      <p class="plan-note" id="planNote" data-i18n="plan.note" hidden>Dunkle Lounges sind bereits vergeben.</p>
+
+      <h2 class="step" id="step3"><span>3</span><b data-i18n="step.form">Deine Angaben</b></h2>
+      <div class="res-grid">
+        <div class="pick" id="pick" aria-live="polite"></div>
+
+        <form class="res" id="resForm" action="reserve.php" method="post" novalidate>
+          <div class="two">
+            <div class="f"><label for="f-date" data-i18n="f.date">Datum</label><select id="f-date" name="event" required></select></div>
+            <div class="f"><label for="f-table" data-i18n="f.lounge">Lounge</label><select id="f-table" name="table" required></select><span class="em" aria-live="polite"></span></div>
+          </div>
+          <div class="two">
+            <div class="f"><label for="f-guests" data-i18n="f.guests">Personen</label><input id="f-guests" name="guests" type="number" inputmode="numeric" min="1" max="30" value="6" required></div>
+            <div class="f"><label for="f-arrival" data-i18n="f.arrival">Ankunft ca.</label>
+              <select id="f-arrival" name="arrival"><option>23:00</option><option>23:30</option><option selected>00:00</option><option>00:30</option><option>01:00</option><option>01:30</option></select></div>
+          </div>
+          <div class="f"><label for="f-name" data-i18n="f.name">Vor- und Nachname</label><input id="f-name" name="name" type="text" autocomplete="name" required minlength="2"><span class="em" aria-live="polite"></span></div>
+          <div class="two">
+            <div class="f"><label for="f-phone" data-i18n="f.phone">Telefon</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+41 79 …" required pattern="[0-9 +().\-\/]{7,25}"><span class="em" aria-live="polite"></span></div>
+            <div class="f"><label for="f-email" data-i18n="f.email">E-Mail</label><input id="f-email" name="email" type="email" autocomplete="email" required><span class="em" aria-live="polite"></span></div>
+          </div>
+          <div class="f"><label for="f-msg" data-i18n="f.msg">Wünsche (optional)</label><textarea id="f-msg" name="message" data-i18n-ph="f.msgPh" maxlength="1000"></textarea></div>
+          <div class="hp" aria-hidden="true"><label for="f-web">Website</label><input id="f-web" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+          <input type="hidden" name="ts" id="f-ts">
+          <input type="hidden" name="lang" id="f-lang" value="de">
+          <label class="ok-check" id="acceptWrap"><input type="checkbox" name="accept" id="f-accept" required> <span data-i18n-html="f.accept">Mir ist bewusst, dass die Mindestkonsumation gilt.</span></label>
+          <div class="msg" id="msg" role="status"></div>
+          <div class="actions">
+            <button class="pill" type="submit" id="send" data-i18n="f.submit">Anfrage senden</button>
+            <button class="pill wa" type="button" id="sendWa" data-i18n="f.wa">Per WhatsApp senden</button>
+          </div>
+          <p class="alt"><span data-i18n="f.or">Oder ruf uns an:</span> <a href="tel:+41792086389">079 208 63 89</a></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>© <span id="year">2026</span> Acapital AG – Face Club, Dietlikon</span>
+    <nav aria-label="Rechtliches"><a href="impressum.html" data-i18n="foot.imprint">Impressum</a><a href="datenschutz.html" data-i18n="foot.privacy">Datenschutz</a><a href="agb.html" data-i18n="foot.terms">AGB</a></nav>
+    <span><span data-i18n="foot.site">Website:</span> <a href="https://ds-digital.ch" target="_blank" rel="noopener">DS Digital Studio</a></span>
+  </div>
+</footer>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
