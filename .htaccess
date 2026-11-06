@@ -1,0 +1,57 @@
+# Face Club – Apache-Konfiguration (Infomaniak)
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+AddDefaultCharset UTF-8
+AddType font/woff2 .woff2
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # HTTPS und www erzwingen (kanonische Adresse: https://www.faceclub.ch)
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} !^www\. [NC]
+  RewriteRule ^ https://www.faceclub.ch%{REQUEST_URI} [L,R=301]
+
+  # Alte URLs des bisherigen Auftritts weiterleiten (SEO & Links auf Flyern)
+  RewriteRule ^homepage/?$             /                    [L,R=301]
+  RewriteRule ^reservation/?$          /#reservation        [L,R=301,NE]
+  RewriteRule ^events/?$               /#events             [L,R=301,NE]
+  RewriteRule ^gallery/?$              /#club               [L,R=301,NE]
+  RewriteRule ^terms-and-conditions/?$ /agb.html            [L,R=301]
+  RewriteRule ^privacy-policy/?$       /datenschutz.html    [L,R=301]
+  RewriteRule ^impressum/?$            /impressum.html      [L,R=301]
+  RewriteRule ^datenschutz/?$          /datenschutz.html    [L,R=301]
+  RewriteRule ^agb/?$                  /agb.html            [L,R=301]
+</IfModule>
+
+# Sicherheits-Header
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header always set Strict-Transport-Security "max-age=31536000"
+</IfModule>
+
+# Komprimierung
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml text/xml
+</IfModule>
+
+# Browser-Cache
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 hour"
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 1 hour"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# Interne Dateien schützen
+<FilesMatch "\.(csv|log|md|ini|sh)$">
+  Require all denied
+</FilesMatch>
