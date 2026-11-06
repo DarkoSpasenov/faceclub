@@ -93,19 +93,12 @@
       return `<article class="card">${pic}<h3>${esc(e.artists)}</h3><p>${longDate(d)} – ${esc(e.title)}</p>
         <a class="pill" href="reservieren.html#${e.date}">${t("cta.reserve")}</a></article>`;
     }).join("");
-    const nextFree = dates.find(x => !eventOn(x));
-    const weekly = `<article class="card"><div class="pic type cyan"><b class="cond">${t("card.weekly.title")}</b><span>${t("card.weekly.text")}</span></div>
-      <h3>${t("clubnight")}</h3><p>${t("info.hoursText")}</p>
-      <a class="pill" href="reservieren.html${nextFree ? "#" + nextFree : ""}">${t("card.weekly.cta")}</a></article>`;
-    const ig = `<article class="card"><div class="pic type light"><b class="cond">${t("card.ig.title")}</b><span>${t("card.ig.text")}</span></div>
-      <h3>@faceclubofficial</h3><p>Instagram</p>
-      <a class="pill ghost" href="https://www.instagram.com/faceclubofficial/" target="_blank" rel="noopener">${t("card.ig.cta")}</a></article>`;
     const past = C.past.map(p => {
       const d = toDate(p.date);
       return `<article class="card past"><div class="pic"><img src="${p.poster}" alt="Flyer ${esc(p.artists)}" loading="lazy" width="720" height="900"></div>
         <h3>${esc(p.artists)}</h3><p>${t("card.past")}, ${d.getDate()}. ${L[lang].months[d.getMonth()]} ${d.getFullYear()}</p></article>`;
     }).join("");
-    $("#track").innerHTML = up + weekly + ig + past;
+    $("#track").innerHTML = up + past;
     updateArrows();
   }
   function updateArrows() {
