@@ -5,7 +5,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lounge reservieren – Face Club Dietlikon</title>
-<meta name="description" content="Lounge im Face Club Dietlikon reservieren: Datum wählen, Platz auf dem Clubplan antippen, Anfrage per E-Mail oder WhatsApp senden.">
+<meta name="description" content="Lounge im Face Club Dietlikon reservieren: Datum wählen, Platz auf dem Clubplan antippen und die fertige Anfrage per WhatsApp senden.">
 <link rel="canonical" href="https://www.faceclub.ch/reservieren.html">
 <meta property="og:site_name" content="Face Club">
 <meta property="og:title" content="Face Club Dietlikon – Live on Face">
@@ -73,31 +73,20 @@
       <div class="res-grid">
         <div class="pick" id="pick" aria-live="polite"></div>
 
-        <form class="res" id="resForm" action="reserve.php" method="post" novalidate>
+        <form class="res" id="resForm" novalidate>
           <div class="two">
-            <div class="f"><label for="f-date" data-i18n="f.date">Datum</label><select id="f-date" name="event" required></select></div>
-            <div class="f"><label for="f-table" data-i18n="f.lounge">Lounge</label><select id="f-table" name="table" required></select><span class="em" aria-live="polite"></span></div>
+            <div class="f"><label for="f-date" data-i18n="f.date">Datum</label><select id="f-date" name="date"></select></div>
+            <div class="f"><label for="f-table" data-i18n="f.lounge">Lounge</label><select id="f-table" name="table"></select><span class="em" aria-live="polite"></span></div>
           </div>
           <div class="two">
-            <div class="f"><label for="f-guests" data-i18n="f.guests">Personen</label><input id="f-guests" name="guests" type="number" inputmode="numeric" min="1" max="30" value="6" required></div>
+            <div class="f"><label for="f-guests" data-i18n="f.guests">Personen</label><input id="f-guests" name="guests" type="number" inputmode="numeric" min="1" max="30" value="6"></div>
             <div class="f"><label for="f-arrival" data-i18n="f.arrival">Ankunft ca.</label>
               <select id="f-arrival" name="arrival"><option>23:00</option><option>23:30</option><option selected>00:00</option><option>00:30</option><option>01:00</option><option>01:30</option></select></div>
           </div>
-          <div class="f"><label for="f-name" data-i18n="f.name">Vor- und Nachname</label><input id="f-name" name="name" type="text" autocomplete="name" required minlength="2"><span class="em" aria-live="polite"></span></div>
-          <div class="two">
-            <div class="f"><label for="f-phone" data-i18n="f.phone">Telefon</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+41 79 …" required pattern="[0-9 +().\-\/]{7,25}"><span class="em" aria-live="polite"></span></div>
-            <div class="f"><label for="f-email" data-i18n="f.email">E-Mail</label><input id="f-email" name="email" type="email" autocomplete="email" required><span class="em" aria-live="polite"></span></div>
-          </div>
-          <div class="f"><label for="f-msg" data-i18n="f.msg">Wünsche (optional)</label><textarea id="f-msg" name="message" data-i18n-ph="f.msgPh" maxlength="1000"></textarea></div>
-          <div class="hp" aria-hidden="true"><label for="f-web">Website</label><input id="f-web" name="website" type="text" tabindex="-1" autocomplete="off"></div>
-          <input type="hidden" name="ts" id="f-ts">
-          <input type="hidden" name="lang" id="f-lang" value="de">
-          <label class="ok-check" id="acceptWrap"><input type="checkbox" name="accept" id="f-accept" required> <span data-i18n-html="f.accept">Mir ist bewusst, dass die Mindestkonsumation gilt.</span></label>
-          <div class="msg" id="msg" role="status"></div>
-          <div class="actions">
-            <button class="pill" type="submit" id="send" data-i18n="f.submit">Anfrage senden</button>
-            <button class="pill wa" type="button" id="sendWa" data-i18n="f.wa">Per WhatsApp senden</button>
-          </div>
+          <div class="f"><label for="f-name" data-i18n="f.name">Vor- und Nachname</label><input id="f-name" name="name" type="text" autocomplete="name"><span class="em" aria-live="polite"></span></div>
+          <div class="f"><label for="f-msg" data-i18n="f.msg">Wünsche (optional)</label><textarea id="f-msg" name="message" data-i18n-ph="f.msgPh" maxlength="500"></textarea></div>
+          <button class="pill wa big" type="submit" id="sendWa"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg><span data-i18n="f.wa">Per WhatsApp anfragen</span></button>
+          <p class="alt" data-i18n="f.note">Es öffnet sich WhatsApp mit deiner fertigen Nachricht – nur noch auf Senden tippen. Die Reservation gilt nach Bestätigung durch den Face Club; es gilt die angegebene Mindestkonsumation.</p>
           <p class="alt"><span data-i18n="f.or">Oder ruf uns an:</span> <a href="tel:+41792086389">079 208 63 89</a></p>
         </form>
       </div>

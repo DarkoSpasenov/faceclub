@@ -67,7 +67,6 @@
     $$("[data-i18n-aria]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nAria)));
     $$("[data-i18n-ph]").forEach(el => el.setAttribute("placeholder", t(el.dataset.i18nPh)));
     $$(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
-    const fl = $("#f-lang"); if (fl) fl.value = lang;
   }
 
   /* ---------- Hero ---------- */
@@ -144,19 +143,44 @@
   /* ---------- Zonen ---------- */
   function renderZones() {
     $("#zones").innerHTML = Object.entries(C.zones).map(([k, z]) =>
-      `<li><button type="button" aria-pressed="${state.zones.has(k)}" data-zone="${k}"><i style="background:${z.color}"></i><b>${t("zone." + k)}</b><em>${t("zone.from", { p: money(z.min) })}, ${t("zone.persons", { a: z.seats[0], b: z.seats[1] })}</em></button></li>`).join("");
+      `<li><button type="button" aria-pressed="${state.zones.has(k)}" data-zone="${k}"><i style="background:${z.color}"></i><b>${t("zone." + k)}</b><em>${t("zone.from", { p: money(z.min) })}, ${t("zone.persons", { a: z.seats[0], b: z.seats[1] })}</em></button></li>`).join("") + `<li class="free"><i></i><em>${t("plan.high")}</em></li>`;
   }
 
-  /* ---------- Plan (Querformat am Desktop, Hochformat am Handy) ---------- */
-  const LAYOUT = {
-    desk: { vb: [1000, 700], room: [20, 20, 960, 660], door: [880, 672, 80, 16], doorL: [920, 662], dj: [420, 36, 160, 70],
-            floor: [160, 150, 680, 400], floorL: [500, 200], bar: [400, 300, 200, 90], wc: [36, 600, 110, 64], coat: [780, 600, 90, 64], fs: 18, ls: 14 },
-    mob:  { vb: [600, 760], room: [10, 10, 580, 740], door: [500, 742, 80, 16], doorL: [540, 728], dj: [240, 24, 120, 56],
-            floor: [100, 120, 400, 465], floorL: [300, 165], bar: [215, 315, 170, 80], wc: [20, 688, 100, 52], coat: [380, 688, 100, 52], fs: 24, ls: 18 }
-  };
+  /* ---------- Plan nach dem 360°-Rundgang (Querformat 1100 × 640, am Handy gedreht) ---------- */
+  const PW = 1100, PH = 640;
+  const FEATURES = [
+    // Räume
+    { t: "rect", c: "hall",  x: 250, y: 20,  w: 830, h: 600, rx: 14 },
+    { t: "rect", c: "room2", x: 20,  y: 140, w: 240, h: 360, rx: 12 },
+    { t: "rect", c: "glass", x: 244, y: 250, w: 14,  h: 140, rx: 3 },
+    // erhöhte Lounge-Podeste entlang der Wände
+    { t: "rect", c: "deck",  x: 340, y: 30,  w: 680, h: 78,  rx: 10 },
+    { t: "rect", c: "deck",  x: 340, y: 532, w: 680, h: 80,  rx: 10 },
+    { t: "circle", c: "podium", x: 312, y: 552, r: 58 },
+    // Bars, Bühne
+    { t: "ellipse", c: "bar", x: 650, y: 320, rx: 125, ry: 72 },
+    { t: "rect", c: "bar2",  x: 262, y: 36,  w: 58,  h: 150, rx: 8 },
+    { t: "rect", c: "stage", x: 1012, y: 200, w: 56, h: 240, rx: 8 },
+    { t: "rect", c: "screen", x: 1072, y: 210, w: 6, h: 220, rx: 3 },
+    // Stehtische (nicht reservierbar)
+    ...[[420,190],[515,172],[800,182],[885,212],[420,452],[520,470],[800,458],[885,428],[360,320],[950,320],
+        [140,230],[205,330],[140,430]].map(([x, y]) => ({ t: "circle", c: "high", x, y, r: 10 })),
+    // Ringleuchten in der Lounge-Bar
+    ...[[165,218],[205,290],[150,375],[200,452]].map(([x, y]) => ({ t: "circle", c: "ring", x, y, r: 20 }))
+  ];
+  const LABELS = [
+    { k: "plan.bar",   x: 650,  y: 326, c: "lbl-bar" },
+    { k: "plan.bar2",  x: 291,  y: 116, c: "lbl", small: true },
+    { k: "plan.dj",    x: 1040, y: 326, c: "lbl-stage" },
+    { k: "plan.floor", x: 860,  y: 326, c: "lbl" },
+    { k: "plan.room2", x: 150,  y: 166, c: "lbl", px: 230, py: 872 },
+    { k: "plan.vip",   x: 312,  y: 482, c: "lbl-vip", small: true, px: 432, py: 800 }
+  ];
   const mqMob = window.matchMedia("(max-width:700px)");
-  const mode = () => (mqMob.matches ? "mob" : "desk");
-  const geo = (l, m) => (m === "mob" && l.m ? { x: l.m[0], y: l.m[1], w: l.m[2], h: l.m[3] } : { x: l.x, y: l.y, w: l.w, h: l.h });
+  const isPortrait = () => mqMob.matches;
+  // Drehung 90° gegen den Uhrzeigersinn: Bühne oben, Lounge-Bar unten
+  const rp = (x, y) => (isPortrait() ? [y, PW - x] : [x, y]);
+  const rr = (x, y, w, h) => (isPortrait() ? [y, PW - x - w, h, w] : [x, y, w, h]);
 
   function svgEl(tag, attrs, text) {
     const e = document.createElementNS(NS, tag);
@@ -165,26 +189,35 @@
     return e;
   }
   function drawPlan(svg, interactive) {
-    const m = mode(), Lo = LAYOUT[m], res = interactive ? reserved() : new Set();
-    svg.setAttribute("viewBox", `0 0 ${Lo.vb[0]} ${Lo.vb[1]}`);
+    const port = isPortrait(), res = interactive ? reserved() : new Set();
+    const fs = port ? 26 : 20, ls = port ? 22 : 15;
+    svg.setAttribute("viewBox", port ? `0 0 ${PH} ${PW}` : `0 0 ${PW} ${PH}`);
     svg.innerHTML = "";
-    const pid = "led-" + (svg.id || "p");
-    const defs = svgEl("defs", {}), pat = svgEl("pattern", { id: pid, width: 50, height: 50, patternUnits: "userSpaceOnUse" });
-    pat.append(svgEl("rect", { width: 50, height: 50, fill: "#080a10" }), svgEl("path", { d: "M50 0H0V50", fill: "none", stroke: "#1a2a3a", "stroke-width": 1 }));
-    defs.append(pat); svg.append(defs);
-    const R = (a, cls, extra) => svgEl("rect", Object.assign({ x: a[0], y: a[1], width: a[2], height: a[3], class: cls, rx: 6 }, extra || {}));
-    const T = (x, y, txt, cls) => svgEl("text", { x, y, "text-anchor": "middle", class: cls, style: `font-size:${Lo.ls}px` }, txt);
-    svg.append(R(Lo.room, "room"));
-    svg.append(svgEl("rect", { x: Lo.door[0], y: Lo.door[1], width: Lo.door[2], height: Lo.door[3], fill: "#0b0c10" }));
-    svg.append(T(Lo.doorL[0], Lo.doorL[1], t("plan.entry"), "flabel"));
-    svg.append(R(Lo.dj, "feature"), T(Lo.dj[0] + Lo.dj[2] / 2, Lo.dj[1] + Lo.dj[3] / 2 + 6, t("plan.dj"), "flabel"));
-    svg.append(R(Lo.floor, "floor", { fill: `url(#${pid})` }), T(Lo.floorL[0], Lo.floorL[1], t("plan.floor"), "flabel"));
-    svg.append(R(Lo.bar, "barisland", { rx: 10 }), T(Lo.bar[0] + Lo.bar[2] / 2, Lo.bar[1] + Lo.bar[3] / 2 + 6, t("plan.bar"), "barlabel"));
-    svg.append(R(Lo.wc, "feature"), T(Lo.wc[0] + Lo.wc[2] / 2, Lo.wc[1] + Lo.wc[3] / 2 + 6, t("plan.wc"), "flabel"));
-    svg.append(R(Lo.coat, "feature"), T(Lo.coat[0] + Lo.coat[2] / 2, Lo.coat[1] + Lo.coat[3] / 2 + 6, t("plan.coat"), "flabel"));
+    const id = svg.id || "p";
+    svg.insertAdjacentHTML("afterbegin", `<defs>
+      <pattern id="${id}-grid" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#0a0e2a"/><path d="M40 0H0V40" fill="none" stroke="#1b2350" stroke-width="1"/></pattern>
+      <radialGradient id="${id}-room2" cx="50%" cy="50%" r="70%"><stop offset="0" stop-color="#1a1240"/><stop offset="1" stop-color="#0c0a22"/></radialGradient>
+      <filter id="${id}-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>`);
+    const fill = { hall: `url(#${id}-grid)`, room2: `url(#${id}-room2)` };
+    FEATURES.forEach(f => {
+      let el;
+      if (f.t === "rect") { const [x, y, w, h] = rr(f.x, f.y, f.w, f.h); el = svgEl("rect", { x, y, width: w, height: h, rx: f.rx || 0 }); }
+      else if (f.t === "circle") { const [x, y] = rp(f.x, f.y); el = svgEl("circle", { cx: x, cy: y, r: f.r }); }
+      else { const [x, y] = rp(f.x, f.y); el = svgEl("ellipse", { cx: x, cy: y, rx: port ? f.ry : f.rx, ry: port ? f.rx : f.ry }); }
+      el.setAttribute("class", "pf-" + f.c);
+      if (fill[f.c]) el.setAttribute("fill", fill[f.c]);
+      if (f.c === "bar" || f.c === "screen" || f.c === "ring") el.setAttribute("filter", `url(#${id}-glow)`);
+      svg.append(el);
+    });
+    LABELS.forEach(l => {
+      const [x, y] = port && l.px ? [l.px, l.py] : rp(l.x, l.y);
+      svg.append(svgEl("text", { x, y: y + 5, "text-anchor": "middle", class: "pl " + l.c, style: `font-size:${l.small ? ls - 2 : ls}px` }, t(l.k)));
+    });
     const g = svgEl("g", { id: interactive ? "tables" : "" });
     C.lounges.forEach(l => {
-      const z = C.zones[l.zone], q = geo(l, m), taken = res.has(l.n);
+      const z = C.zones[l.zone], taken = res.has(l.n);
+      const [x, y, w, h] = rr(l.x - l.w / 2, l.y - l.h / 2, l.w, l.h);
       const el = svgEl("g", { class: "tbl" + (taken ? " reserved" : "") + (interactive && state.lounge === l.n ? " selected" : "") + (state.zones.has(l.zone) || !interactive ? "" : " dim") });
       el.dataset.n = l.n;
       if (interactive) {
@@ -193,9 +226,11 @@
         el.setAttribute("aria-pressed", String(state.lounge === l.n));
         el.setAttribute("aria-label", `${t("lounge")} ${l.n}, ${t("zone." + l.zone)}, ${t("pick.persons", { a: z.seats[0], b: z.seats[1] })}, ${t("zone.from", { p: money(z.min) })}${taken ? ", " + t("taken") : ""}`);
       }
-      const box = (cls, pad) => svgEl("rect", { x: q.x - q.w / 2 - pad, y: q.y - q.h / 2 - pad, width: q.w + pad * 2, height: q.h + pad * 2, rx: 6 + pad, class: cls });
-      const shape = box("shape", 0); shape.setAttribute("fill", z.color); shape.setAttribute("stroke", z.color);
-      el.append(box("ring", 5), shape, svgEl("text", { x: q.x, y: q.y + Lo.fs / 3, "text-anchor": "middle", fill: z.text, style: `font-size:${Lo.fs}px` }, String(l.n)));
+      el.append(
+        svgEl("rect", { x: x - 5, y: y - 5, width: w + 10, height: h + 10, rx: 12, class: "ring" }),
+        svgEl("rect", { x, y, width: w, height: h, rx: 9, class: "shape", fill: z.color, stroke: z.color }),
+        svgEl("text", { x: x + w / 2, y: y + h / 2 + fs / 3, "text-anchor": "middle", fill: z.text, style: `font-size:${fs}px` }, String(l.n))
+      );
       g.append(el);
     });
     svg.append(g);
@@ -217,13 +252,15 @@
       const l = loungeBy(+el.dataset.n), z = C.zones[l.zone], taken = el.classList.contains("reserved");
       tip.innerHTML = `<b>${t("lounge")} ${l.n}</b> – ${t("zone." + l.zone)}<br>${taken ? t("taken") : t("zone.from", { p: money(z.min) }) + ", " + t("zone.persons", { a: z.seats[0], b: z.seats[1] })}`;
       const r = el.getBoundingClientRect(), b = box.getBoundingClientRect();
-      tip.style.left = (r.left - b.left + r.width / 2) + "px";
+      const half = (tip.offsetWidth || 180) / 2 + 8;
+      tip.style.left = Math.min(Math.max(r.left - b.left + r.width / 2, half), b.width - half) + "px";
       tip.style.top = (r.top - b.top) + "px";
       tip.classList.add("on");
     };
     svg.addEventListener("pointerover", e => { const el = hit(e); if (el && e.pointerType === "mouse") show(el); });
     svg.addEventListener("pointerout", e => { if (hit(e)) tip.classList.remove("on"); });
-    svg.addEventListener("focusin", e => { const el = hit(e); if (el) show(el); });
+    const canHover = window.matchMedia("(hover:hover)").matches;
+    svg.addEventListener("focusin", e => { const el = hit(e); if (el && canHover) show(el); });
     svg.addEventListener("focusout", () => tip.classList.remove("on"));
   }
   function selectLounge(n, fromPlan) {
@@ -274,68 +311,28 @@
     f.classList.remove("bad"); input.removeAttribute("aria-invalid");
     const em = $(".em", f); if (em) em.textContent = "";
   }
-  function validate() {
-    let ok = true, first = null;
-    const fail = (el, m) => { setErr(el, m); ok = false; first = first || el; };
-    const name = $("#f-name"), phone = $("#f-phone"), email = $("#f-email"), table = $("#f-table"), acc = $("#f-accept");
-    [name, phone, email, table].forEach(clearErr);
-    if (!table.value) fail(table, t("err.noLounge"));
-    if (name.value.trim().length < 2) fail(name, t("err.required"));
-    if (!/^[0-9 +().\-\/]{7,25}$/.test(phone.value.trim())) fail(phone, phone.value.trim() ? t("err.phone") : t("err.required"));
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim())) fail(email, email.value.trim() ? t("err.email") : t("err.required"));
-    $("#acceptWrap").classList.toggle("bad", !acc.checked);
-    if (!acc.checked) { ok = false; first = first || acc; }
-    if (first) first.focus();
-    return ok;
+  function waText() {
+    const l = loungeBy(state.lounge), msg = $("#f-msg").value.trim();
+    return t("wa.text", {
+      d: shortDate(toDate(state.date)) + " – " + dateLabel(state.date),
+      n: l.n, z: t("zone." + l.zone), g: $("#f-guests").value, t: $("#f-arrival").value,
+      name: $("#f-name").value.trim(), msg: msg ? "\n" + msg : ""
+    });
   }
-  function showMsg(type, html) { const m = $("#msg"); m.className = "msg " + type; m.innerHTML = html; }
 
   function initForm() {
-    const form = $("#resForm"), send = $("#send");
     $("#f-date").addEventListener("change", e => setDate(e.target.value));
     $("#f-table").addEventListener("change", e => selectLounge(parseInt(e.target.value, 10) || null, false));
-    ["#f-name", "#f-phone", "#f-email"].forEach(s => $(s).addEventListener("input", e => clearErr(e.target)));
-    $("#f-accept").addEventListener("change", e => $("#acceptWrap").classList.toggle("bad", !e.target.checked));
-
-    form.addEventListener("submit", async ev => {
+    $("#f-name").addEventListener("input", e => clearErr(e.target));
+    $("#resForm").addEventListener("submit", ev => {
       ev.preventDefault();
-      $("#msg").className = "msg";
-      if (!validate()) { showMsg("err", esc(t("err.fields"))); return; }
-      const l = loungeBy(state.lounge), z = C.zones[l.zone], e = eventOn(state.date);
-      const data = new FormData(form);
-      data.set("table", l.n);
-      data.append("zone", t("zone." + l.zone));
-      data.append("min_spend", money(z.min));
-      data.append("event_title", e ? `${e.artists} – ${e.title}` : t("clubnight"));
-      send.disabled = true; send.textContent = t("f.sending");
-      try {
-        const r = await fetch(form.action, { method: "POST", body: data, headers: { Accept: "application/json" } });
-        const j = await r.json();
-        if (!r.ok || !j.ok) throw new Error(j.error || "send");
-        showMsg("ok", esc(t("ok.sent", { n: l.n, d: shortDate(toDate(state.date)) })));
-        form.reset(); $("#f-lang").value = lang; $("#f-date").value = state.date;
-        state.lounge = null; renderTables(); renderPick(); renderLoungeSelect(); stamp();
-      } catch (err) {
-        showMsg("err", esc(t("err.send", { phone: "079 208 63 89" })));
-      } finally {
-        send.disabled = false; send.textContent = t("f.submit");
-      }
-    });
-
-    $("#sendWa").addEventListener("click", () => {
-      const l = loungeBy(state.lounge);
-      if (!l) { setErr($("#f-table"), t("err.noLounge")); $("#f-table").focus(); return; }
-      const msg = $("#f-msg").value.trim();
-      const text = t("wa.text", {
-        d: shortDate(toDate(state.date)) + " – " + dateLabel(state.date),
-        n: l.n, z: t("zone." + l.zone), g: $("#f-guests").value, t: $("#f-arrival").value,
-        name: $("#f-name").value.trim() || "–", phone: $("#f-phone").value.trim() || "–",
-        msg: msg ? "\n" + msg : ""
-      });
-      window.open("https://wa.me/" + C.whatsapp + "?text=" + encodeURIComponent(text), "_blank", "noopener");
+      const tbl = $("#f-table"), name = $("#f-name");
+      clearErr(tbl); clearErr(name);
+      if (!state.lounge) { setErr(tbl, t("err.noLounge")); $("#plan").scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+      if (name.value.trim().length < 2) { setErr(name, t("err.required")); name.focus(); return; }
+      window.open("https://wa.me/" + C.whatsapp + "?text=" + encodeURIComponent(waText()), "_blank", "noopener");
     });
   }
-  function stamp() { $("#f-ts").value = Date.now(); }
 
   /* ---------- Delegierte Klicks: Datum vorwählen, Zonen ---------- */
   document.addEventListener("click", e => {
@@ -399,5 +396,5 @@
   }
   renderAll();
   if (isHome) { initIntro(); initCarousel(); initSticky(); }
-  if (isRes) { initPlan(); initForm(); stamp(); }
+  if (isRes) { initPlan(); initForm(); }
 })();

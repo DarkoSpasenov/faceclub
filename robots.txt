@@ -1,5 +1,4 @@
 User-agent: *
-Disallow: /data/
-Disallow: /reserve.php
+Disallow:
 
 Sitemap: https://www.faceclub.ch/sitemap.xml

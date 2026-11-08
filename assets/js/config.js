@@ -48,32 +48,33 @@ window.FC_CONFIG = {
 
   /* Zonen und Mindestkonsumation – PROVISORISCH, mit dem Club abstimmen */
   zones: {
-    vip:     { color: "#7b5cff", text: "#ffffff", min: 1500, seats: [8, 12],  photo: "assets/club-vip-moet.jpg" },
-    premium: { color: "#4fddeb", text: "#04121a", min: 800,  seats: [6, 10],  photo: "assets/club-lounge.jpg" },
-    lounge:  { color: "#c9cdd3", text: "#05060a", min: 500,  seats: [4, 8],   photo: "assets/club-lounge.jpg" }
+    vip:     { color: "#8b6cff", text: "#ffffff", min: 1500, seats: [8, 12], photo: "assets/club-vip-moet.jpg" },
+    premium: { color: "#4fddeb", text: "#04121a", min: 800,  seats: [6, 10], photo: "assets/club-lounge.jpg" },
+    lounge:  { color: "#ff7ab8", text: "#2a0618", min: 500,  seats: [4, 8],  photo: "assets/club-lounge.jpg" }
   },
 
-  /* Lounges: Mittelpunkt x/y und Grösse w/h auf dem Plan (1000 × 700).
-     m = gleiche Lounge auf dem Handy-Plan (Hochformat 600 × 760): [x, y, w, h] */
+  /* Lounges nach dem 360°-Rundgang: Mittelpunkt x/y, Grösse w/h im Plan (1100 × 640).
+     Nordwand 1–7, Südwand 8–14, VIP-Podest 15, Lounge-Bar 16–19.
+     Auf dem Handy wird der Plan automatisch ins Hochformat gedreht. */
   lounges: [
-    { n: 1,  zone: "vip",     x: 190, y: 75,  w: 110, h: 60, m: [75, 52, 92, 56] },
-    { n: 2,  zone: "vip",     x: 330, y: 75,  w: 110, h: 60, m: [180, 52, 92, 56] },
-    { n: 3,  zone: "vip",     x: 670, y: 75,  w: 110, h: 60, m: [420, 52, 92, 56] },
-    { n: 4,  zone: "vip",     x: 810, y: 75,  w: 110, h: 60, m: [525, 52, 92, 56] },
-    { n: 5,  zone: "premium", x: 85,  y: 180, w: 70,  h: 80, m: [52, 175, 64, 74] },
-    { n: 6,  zone: "premium", x: 85,  y: 270, w: 70,  h: 80, m: [52, 260, 64, 74] },
-    { n: 7,  zone: "premium", x: 85,  y: 360, w: 70,  h: 80, m: [52, 345, 64, 74] },
-    { n: 8,  zone: "premium", x: 85,  y: 450, w: 70,  h: 80, m: [52, 430, 64, 74] },
-    { n: 9,  zone: "premium", x: 85,  y: 540, w: 70,  h: 80, m: [52, 515, 64, 74] },
-    { n: 10, zone: "premium", x: 915, y: 180, w: 70,  h: 80, m: [548, 175, 64, 74] },
-    { n: 11, zone: "premium", x: 915, y: 270, w: 70,  h: 80, m: [548, 260, 64, 74] },
-    { n: 12, zone: "premium", x: 915, y: 360, w: 70,  h: 80, m: [548, 345, 64, 74] },
-    { n: 13, zone: "premium", x: 915, y: 450, w: 70,  h: 80, m: [548, 430, 64, 74] },
-    { n: 14, zone: "premium", x: 915, y: 540, w: 70,  h: 80, m: [548, 515, 64, 74] },
-    { n: 15, zone: "lounge",  x: 240, y: 620, w: 100, h: 56, m: [110, 640, 86, 56] },
-    { n: 16, zone: "lounge",  x: 355, y: 620, w: 100, h: 56, m: [205, 640, 86, 56] },
-    { n: 17, zone: "lounge",  x: 470, y: 620, w: 100, h: 56, m: [300, 640, 86, 56] },
-    { n: 18, zone: "lounge",  x: 585, y: 620, w: 100, h: 56, m: [395, 640, 86, 56] },
-    { n: 19, zone: "lounge",  x: 700, y: 620, w: 100, h: 56, m: [490, 640, 86, 56] }
+    { n: 1,  zone: "premium", x: 400, y: 68,  w: 84, h: 50 },
+    { n: 2,  zone: "premium", x: 495, y: 68,  w: 84, h: 50 },
+    { n: 3,  zone: "premium", x: 590, y: 68,  w: 84, h: 50 },
+    { n: 4,  zone: "premium", x: 685, y: 68,  w: 84, h: 50 },
+    { n: 5,  zone: "premium", x: 780, y: 68,  w: 84, h: 50 },
+    { n: 6,  zone: "vip",     x: 875, y: 68,  w: 84, h: 50 },
+    { n: 7,  zone: "vip",     x: 970, y: 68,  w: 84, h: 50 },
+    { n: 8,  zone: "premium", x: 400, y: 572, w: 84, h: 50 },
+    { n: 9,  zone: "premium", x: 495, y: 572, w: 84, h: 50 },
+    { n: 10, zone: "premium", x: 590, y: 572, w: 84, h: 50 },
+    { n: 11, zone: "premium", x: 685, y: 572, w: 84, h: 50 },
+    { n: 12, zone: "premium", x: 780, y: 572, w: 84, h: 50 },
+    { n: 13, zone: "vip",     x: 875, y: 572, w: 84, h: 50 },
+    { n: 14, zone: "vip",     x: 970, y: 572, w: 84, h: 50 },
+    { n: 15, zone: "vip",     x: 312, y: 552, w: 78, h: 50 },
+    { n: 16, zone: "lounge",  x: 52,  y: 200, w: 50, h: 62 },
+    { n: 17, zone: "lounge",  x: 52,  y: 275, w: 50, h: 62 },
+    { n: 18, zone: "lounge",  x: 52,  y: 350, w: 50, h: 62 },
+    { n: 19, zone: "lounge",  x: 52,  y: 425, w: 50, h: 62 }
   ]
 };
