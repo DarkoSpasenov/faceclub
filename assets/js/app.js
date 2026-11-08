@@ -79,25 +79,9 @@
     }
     const d = toDate(e.date);
     box.innerHTML = `<p class="kicker">${longDate(d)} – ${esc(e.title)}${e.soldOut ? ` <span class="soldout">${t("card.soldout")}</span>` : ""}</p>
-      <div id="cd"></div>
       <h1 class="cond">${esc(e.artists)}<span class="vh"> – ${esc(t("hero.live", { a: "" }).trim())}</span></h1>
       <a class="pill" href="reservieren.html#${e.date}">${t("cta.reserve")}</a>`;
   }
-
-  /* Countdown bis Türöffnung (23 Uhr) */
-  let cdTimer = null;
-  function renderCountdown() {
-    const box = $("#cd"), e = upcoming[0];
-    if (!box || !e) return;
-    const start = toDate(e.date); start.setHours(23, 0, 0, 0);
-    const diff = start - Date.now();
-    if (diff <= 0) { box.innerHTML = Date.now() - start < 5 * 3600e3 ? `<span class="tonight">${t("cd.tonight")}</span>` : ""; return; }
-    const dd = Math.floor(diff / 864e5), hh = Math.floor(diff % 864e5 / 36e5), mm = Math.floor(diff % 36e5 / 6e4);
-    const cell = (v, k) => `<div><b>${String(v).padStart(2, "0")}</b><span>${t(k)}</span></div>`;
-    box.innerHTML = (dd === 0 && hh < 12) ? `<span class="tonight">${t("cd.tonight")}</span>`
-      : `<div class="countdown" role="timer" aria-label="${t("cd.label")}">${cell(dd, "cd.d")}${cell(hh, "cd.h")}${cell(mm, "cd.m")}</div>`;
-  }
-  function startCountdown() { renderCountdown(); clearInterval(cdTimer); cdTimer = setInterval(renderCountdown, 30000); }
 
   /* ---------- Event-Karten ---------- */
   function renderCards() {
@@ -383,7 +367,7 @@
   const isHome = !!$("#heroEvent"), isRes = !!$("#resForm");
   function renderAll() {
     applyStatic();
-    if (isHome) { renderHero(); startCountdown(); renderCards(); const mp = $("#miniPlan"); if (mp) drawPlan(mp, false); }
+    if (isHome) { renderHero(); renderCards(); const mp = $("#miniPlan"); if (mp) drawPlan(mp, false); }
     if (isRes) { renderDates(); renderZones(); renderLoungeSelect(); renderTables(); renderPick(); }
   }
   mqMob.addEventListener("change", () => { if (isRes) renderTables(); const mp = $("#miniPlan"); if (mp) drawPlan(mp, false); });
